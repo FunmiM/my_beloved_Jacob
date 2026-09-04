@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  HOW TO ADD PHOTOS (BACKGROUND, SUBTLE ON EVERY PAGE):
+  Search this file for: background-image: url('')
+  There are 6 of them, one per page (marked with PHOTO comments).
+  Put your photo filename inside the quotes, e.g.:
+      background-image: url('jacob1.jpg');
+  Keep your photo files in the SAME FOLDER as this HTML file.
+  Photos are automatically dimmed/overlaid so text stays readable —
+  you don't need to edit anything else for that.
+
+  HOW TO ADD THE SLIDESHOW PHOTOS (page 5):
+  Scroll down to the section with id="slideshow".
+  There are 7 <div class="slide"> blocks, each with its own
+  background-image: url('') — same method, one photo per slide.
+
+  HOW TO ADD SPOTIFY MUSIC:
+  See the SPOTIFY EMBED comment near the top of <body> below.
+  Full instructions are also in the companion PDF.
+  ============================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Jacob</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1B1A2E;
+    --gold: #E8B86D;
+    --cream: #F5E6DD;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--ink);
+    color: var(--cream);
+    overflow-x: hidden;
+  }
+
+  h1, h2, .display {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  section {
+    min-height: 100vh;
+    padding: 6rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  /* ---------- FLOATING AMBIENT LAYER (stars + drifting shapes) ---------- */
+  .ambient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: twinkle 3.5s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.15; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.6); }
+  }
+
+  .petal {
+    position: absolute;
+    top: -5%;
+    font-size: 1.1rem;
+    opacity: 0.55;
+    animation: drift-down linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes drift-down {
+    0%   { transform: translate(0, -10vh) rotate(0deg); }
+    100% { transform: translate(var(--drift, 40px), 115vh) rotate(360deg); }
+  }
+
+  .plane {
+    position: absolute;
+    font-size: 1.6rem;
+    opacity: 0.7;
+    animation: fly-across 14s linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes fly-across {
+    0%   { transform: translate(-10vw, 20vh) rotate(8deg); opacity: 0; }
+    8%   { opacity: 0.7; }
+    50%  { transform: translate(55vw, -4vh) rotate(4deg); }
+    92%  { opacity: 0.7; }
+    100% { transform: translate(115vw, 12vh) rotate(10deg); opacity: 0; }
+  }
+
+  .balloon {
+    position: absolute;
+    bottom: -15%;
+    font-size: 2rem;
+    opacity: 0.75;
+    animation: float-up linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes float-up {
+    0%   { transform: translate(0, 0) rotate(-4deg); }
+    50%  { transform: translate(18px, -55vh) rotate(4deg); }
+    100% { transform: translate(-10px, -115vh) rotate(-4deg); }
+  }
+
+  .glow-pulse {
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(232,184,109,0.16) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+    animation: pulse-glow 6s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.12); }
+  }
+
+  /* scroll-reveal for content blocks */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+
+  .content.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---------- BACKGROUND PHOTO LAYER (subtle, on every page) ---------- */
+  .bg-photo {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  .bg-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(27,26,46,0.70) 0%, rgba(27,26,46,0.78) 100%);
+  }
+
+  .divider {
+    width: 44px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.6;
+    margin: 1.8rem auto;
+  }
+
+  .eyebrow {
+    color: var(--gold);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 1.2rem;
+  }
+
+  .corner-mark {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(232,184,109,0.35);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .corner-mark.tl { top: 2rem; left: 2rem; border-right: none; border-bottom: none; }
+  .corner-mark.br { bottom: 2rem; right: 2rem; border-left: none; border-top: none; }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 2.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.6;
+    z-index: 1;
+  }
+
+  /* ---------- PAGE 1: HERO ---------- */
+  #hero h1 {
+    font-size: clamp(2.6rem, 8vw, 4.6rem);
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+  }
+
+  #hero .name {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  #hero .sub {
+    font-size: 1.05rem;
+    opacity: 0.8;
+    max-width: 32ch;
+    margin: 0 auto 2.5rem;
+  }
+
+  #hero .sub strong { color: var(--gold); font-weight: 600; }
+
+  .gift-box {
+    display: inline-block;
+    padding: 1.1rem 2.2rem;
+    border: 1px solid rgba(232,184,109,0.5);
+    border-radius: 6px;
+    color: var(--gold);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(232,184,109,0.04);
+    animation: box-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes box-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(232,184,109,0.25); }
+    50%      { box-shadow: 0 0 0 10px rgba(232,184,109,0); }
+  }
+
+  .gift-box:hover {
+    background: rgba(232,184,109,0.1);
+    border-color: var(--gold);
+    transform: translateY(-2px) scale(1.03);
+    animation-play-state: paused;
+  }
+
+  /* ---------- LETTER PAGES (2, 3, 4, 6) ---------- */
+  .letter-page {
+    background: var(--ink);
+  }
+
+  .letter-page .content p {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.15rem, 3vw, 1.5rem);
+    line-height: 1.75;
+    color: var(--cream);
+  }
+
+  .letter-page .content p.salutation {
+    color: var(--gold);
+    font-style: italic;
+    margin-bottom: 1.6rem;
+  }
+
+  .letter-page .content p + p {
+    margin-top: 1.4rem;
+  }
+
+  .letter-page .signoff {
+    margin-top: 2.2rem;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 1.15rem;
+  }
+
+  /* alternate page tone for variety, same 3-color system */
+  #page3 {
+    background: linear-gradient(180deg, var(--ink) 0%, #211f38 100%);
+  }
+
+  #page4 {
+    background: var(--ink);
+  }
+
+  /* ---------- PAGE 5: SLIDESHOW ---------- */
+  #slideshow {
+    background: var(--ink);
+    padding: 5rem 1.5rem;
+  }
+
+  .slideshow-frame {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 4 / 5;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+    border: 1px solid rgba(232,184,109,0.25);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-color: #2A2846;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+
+  .slide.active { opacity: 1; }
+
+  .slide-label {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 1.5rem;
+    background: linear-gradient(0deg, rgba(27,26,46,0.85), transparent);
+    font-size: 0.8rem;
+    color: var(--cream);
+    opacity: 0.6;
+    text-align: left;
+  }
+
+  .slide-dots {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.6rem;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(232,184,109,0.3);
+    transition: background 0.3s ease;
+  }
+
+  .dot.active { background: var(--gold); }
+
+  /* ---------- SPOTIFY EMBED ---------- */
+  .spotify-wrap {
+    margin-top: 2.5rem;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  /* ---------- FINALE ---------- */
+  #finale h2 {
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    color: var(--cream);
+    line-height: 1.2;
+  }
+
+  #finale .heart {
+    color: #C97B84;
+    display: inline-block;
+    animation: heartbeat 1.6s ease-in-out infinite;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25%      { transform: scale(1.18); }
+    40%      { transform: scale(1); }
+  }
+
+  #finale .welcome {
+    margin-top: 1.6rem;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 1.3rem;
+  }
+</style>
+</head>
+<body>
+
+<!--
+  SPOTIFY EMBED — put this anywhere you'd like the song to live.
+  It's placed here at the very top of <body> so it starts loading
+  right away and plays quietly in the background across the visit.
+  Replace TRACK_ID below with your song's ID — see the PDF for how
+  to get this from Spotify. This iframe is invisible (0 height) —
+  it plays audio without showing a player. If you'd rather show a
+  visible mini player, change height="0" to height="80".
+-->
+<iframe
+  src="https://open.spotify.com/embed/track/4oHQ8n9OKQ3599e8noCrDX?utm_source=generator&autoplay=1"
+  width="1" height="1" frameborder="0" allowtransparency="true"
+  allow="autoplay; encrypted-media"
+  style="position:absolute; opacity:0;">
+</iframe>
+
+<!-- ================= PAGE 1 : HERO ================= -->
+<section id="hero">
+  <!-- PHOTO 1 (subtle background for this page) -->
+  <div class="bg-photo" style="background-image: url('1788463999119.jpg');"></div>
+  <div class="ambient">
+    <div class="star" style="top:12%; left:8%; animation-delay:0s;"></div>
+    <div class="star" style="top:22%; left:82%; animation-delay:0.6s;"></div>
+    <div class="star" style="top:68%; left:14%; animation-delay:1.2s;"></div>
+    <div class="star" style="top:78%; left:88%; animation-delay:1.8s;"></div>
+    <div class="star" style="top:38%; left:48%; animation-delay:2.4s;"></div>
+    <div class="star" style="top:15%; left:60%; animation-delay:0.9s;"></div>
+    <div class="plane" style="top:18%;">✈️</div>
+    <div class="petal" style="left:15%; animation-duration:11s; animation-delay:0s; --drift:60px;">🎈</div>
+    <div class="petal" style="left:75%; animation-duration:13s; animation-delay:3s; --drift:-40px;">✨</div>
+    <div class="petal" style="left:45%; animation-duration:9s; animation-delay:1.5s; --drift:30px;">🎉</div>
+  </div>
+  <div class="glow-pulse" style="top:20%; left:50%; transform:translateX(-50%);"></div>
+  <div class="corner-mark tl"></div>
+  <div class="corner-mark br"></div>
+  <div class="content">
+    <div class="eyebrow">September 6, 2026</div>
+    <h1>Happy Birthday,<br><span class="name">Jacob Omooluwa</span></h1>
+    <div class="divider"></div>
+    <p class="sub">Turning <strong>25</strong> today — and the world gets to celebrate you all over again.</p>
+    <div class="gift-box" onclick="openGift()">Tap to open up my gift.</div>
+  </div>
+</section>
+
+<!-- ================= PAGE 2 : MAIN MESSAGE ================= -->
+<section id="page2" class="letter-page">
+  <!-- PHOTO 2 -->
+  <div class="bg-photo" style="background-image: url('1788463999887.jpg');"></div>
+  <div class="ambient">
+    <div class="star" style="top:15%; left:12%; animation-delay:0.3s;"></div>
+    <div class="star" style="top:85%; left:80%; animation-delay:1.1s;"></div>
+    <div class="star" style="top:50%; left:90%; animation-delay:1.9s;"></div>
+    <div class="petal" style="left:85%; animation-duration:12s; animation-delay:0.5s; --drift:-30px;">🤍</div>
+  </div>
+  <div class="content">
+    <p class="salutation">My darling Jacob,</p>
+    <p>I'm <em>grateful</em> for the day you were born. Your enthusiasm about life, your love for your family, your <strong>handsome</strong> smile, the intoxicating smell, brooooooo — I thank God everyday for meeting you.</p>
+    <p>The world is a much better place with you around.</p>
+    <p>Happy birthday, <em>My Jacob</em>.<br>I love you.</p>
+    <div class="signoff">— always, and every year after this one</div>
+  </div>
+</section>
+
+<!-- ================= PAGE 3 : WHAT I LOVE MOST ================= -->
+<section id="page3" class="letter-page">
+  <!-- PHOTO 3 -->
+  <div class="bg-photo" style="background-image: url('1788464320604.jpg');"></div>
+  <div class="ambient">
+    <div class="star" style="top:20%; left:85%; animation-delay:0.2s;"></div>
+    <div class="star" style="top:75%; left:10%; animation-delay:1.4s;"></div>
+    <div class="petal" style="left:20%; animation-duration:10s; animation-delay:1s; --drift:40px;">💫</div>
+  </div>
+  <div class="content">
+    <div class="eyebrow">what I love most</div>
+    <p>I love how you get when you're <strong>passionate</strong> about something. I love how <em>contagious</em> your enthusiasm is, how dedicated and diligent you are — and I loveeeeeee the shape of your nose.</p>
+    <p>You give the best hugs, and you smell like <strong>Heaven</strong>.</p>
+  </div>
+</section>
+
+<!-- ================= PAGE 4 : OUR DREAMS ================= -->
+<section id="page4" class="letter-page">
+  <!-- PHOTO 4 -->
+  <div class="bg-photo" style="background-image: url('1788464320646.jpg');"></div>
+  <div class="ambient">
+    <div class="star" style="top:18%; left:20%; animation-delay:0.8s;"></div>
+    <div class="star" style="top:70%; left:78%; animation-delay:1.6s;"></div>
+    <div class="plane" style="top:65%; animation-duration:18s; animation-delay:2s;">✈️</div>
+    <div class="petal" style="left:60%; animation-duration:11s; animation-delay:0.3s; --drift:-50px;">🌍</div>
+  </div>
+  <div class="content">
+    <div class="eyebrow">our dreams together</div>
+    <p>Can't wait to <strong>travel together</strong> and have babies with you. 🤭</p>
+    <p>I'm definitely going to make you eat <em>allllllllllll</em> sorts of things. 😌🤝</p>
+  </div>
+</section>
+
+<!-- ================= PAGE 5 : SLIDESHOW ================= -->
+<section id="slideshow">
+  <!-- PHOTO (page background, still subtle) -->
+  <div class="bg-photo" style="background-image: url('1788464320723.jpg');"></div>
+  <div class="ambient">
+    <div class="star" style="top:10%; left:15%; animation-delay:0.4s;"></div>
+    <div class="star" style="top:88%; left:85%; animation-delay:1.3s;"></div>
+    <div class="star" style="top:20%; left:80%; animation-delay:2.1s;"></div>
+  </div>
+  <div class="content" style="max-width: 560px;">
+    <div class="eyebrow">a few favorites</div>
+    <div class="divider"></div>
+  </div>
+  <div class="slideshow-frame" style="z-index:1;">
+    <!-- 7 SLIDESHOW PHOTOS — set each background-image below -->
+    <div class="slide active" style="background-image: url('1788464320884.jpg');"></div>
+    <div class="slide" style="background-image: url('1788464320841.jpg');"></div>
+    <div class="slide" style="background-image: url('1788464320841.jpg');"></div>
+    <div class="slide" style="background-image: url('1788464320723.jpg');"></div>
+    <div class="slide" style="background-image: url('1788464320802.jpg');"></div>
+    <div class="slide" style="background-image: url('1788464320685.jpg');"></div>
+    <div class="slide" style="background-image: url('1788464320884.jpg');"></div>
+  </div>
+  <div class="slide-dots" id="slideDots" style="z-index:1;"></div>
+</section>
+
+<!-- ================= PAGE 6 : FINALE ================= -->
+<section id="finale">
+  <!-- PHOTO 6 -->
+  <div class="bg-photo" style="background-image: url('');"></div>
+  <div class="ambient">
+    <div class="star" style="top:10%; left:20%; animation-delay:0.2s;"></div>
+    <div class="star" style="top:15%; left:75%; animation-delay:1s;"></div>
+    <div class="star" style="top:80%; left:12%; animation-delay:1.8s;"></div>
+    <div class="star" style="top:85%; left:82%; animation-delay:2.5s;"></div>
+    <div class="balloon" style="left:12%; animation-duration:13s; animation-delay:0s;">🎈</div>
+    <div class="balloon" style="left:78%; animation-duration:16s; animation-delay:2.5s;">🎈</div>
+    <div class="balloon" style="left:48%; animation-duration:14.5s; animation-delay:5s;">🎈</div>
+  </div>
+  <div class="glow-pulse" style="bottom:10%; left:50%; transform:translateX(-50%);"></div>
+  <div class="corner-mark tl"></div>
+  <div class="corner-mark br"></div>
+  <div class="content">
+    <h2>Happy birthday,<br><em>My Darling</em></h2>
+    <div class="divider"></div>
+    <div class="welcome">Welcome to 25 <span class="heart">❤️</span></div>
+  </div>
+</section>
+
+<script>
+  function openGift() {
+  document.getElementById('page2').scrollIntoView({ behavior: 'smooth' });
+
+  const iframe = document.getElementById('spotifyPlayer');
+  iframe.contentWindow.postMessage(
+    { command: 'play' },
+    'https://open.spotify.com'
+  );
+}
+
+  // ---- SCROLL REVEAL ----
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, { threshold: 0.35 });
+
+  document.querySelectorAll('.content').forEach(el => revealObserver.observe(el));
+
+  // ---- SLIDESHOW ----
+  const slides = document.querySelectorAll('#slideshow .slide');
+  const dotsWrap = document.getElementById('slideDots');
+  let current = 0;
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dotsWrap.appendChild(dot);
+  });
+
+  const dots = document.querySelectorAll('.dot');
+
+  function showSlide(i) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = i;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+
+  setInterval(() => {
+    const next = (current + 1) % slides.length;
+    showSlide(next);
+  }, 3500);
+</script>
+
+</body>
+</html>
